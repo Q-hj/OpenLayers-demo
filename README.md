@@ -1,7 +1,9 @@
-# Vue 3 + Vite
+# OpenLayers-Demo
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+## geojson 相关功能实现
 
-## Recommended IDE Setup
+> App2.vue
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+- 不同市、不同区，填充不同颜色
+- 点击市-视图调整
+- 缩小视图，显示浙江省区划 geojson
