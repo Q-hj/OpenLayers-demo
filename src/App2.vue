@@ -153,6 +153,7 @@
 					enableRotation: false,
 				}),
 			});
+			// 鼠标点击事件
 			map.on('singleclick', (e) => {
 				const features = map.getFeaturesAtPixel(e.pixel);
 
@@ -164,6 +165,17 @@
 				const isCity = Object.keys(cityGeoJson).includes(name);
 				isCity && addLayer(name);
 			});
+			// 监听视角
+			map.on('moveend', (e) => {
+				const zoom = map.getView().getZoom(); //获取当前地图的缩放级别
+
+				const getAllLayers = map.getLayers().getArray();
+				// const isProvinceLevel = getAllLayers.some((e) => e.values_.id == '浙江省');
+
+				// 省:8  市:9.5
+				if (zoom < 9) addLayer('浙江省');
+			});
+
 			resolve();
 		});
 	};
@@ -188,7 +200,7 @@
 		const center = getCenterByExtent(extent);
 		// map.getView().setCenter(center);
 		const zoom = layerId.includes('省') ? 8 : 9.5;
-		const duration = layerId.includes('省') ? 800 : 1000;
+		const duration = layerId.includes('省') ? 500 : 600;
 		map.getView().animate({
 			center,
 			zoom,
@@ -205,7 +217,23 @@
 
 <template>
 	<div class="warp">
-		<div id="map"></div>
+		<div id="map">
+			<div class="legend">
+				<p>图例</p>
+				<ul>
+					<li
+						v-for="(item, i) in colorConfig.slice(1)"
+						:key="i"
+					>
+						<div
+							class="color"
+							:style="{ background: item }"
+						></div>
+						<span>{{ ['良好', '正常', '警告', '严重'][i] }}</span>
+					</li>
+				</ul>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -224,5 +252,35 @@
 		height: 800px;
 		border: 1px solid #b0a9a9;
 		box-shadow: 0 0 10px #b0a9a9;
+		position: relative;
+	}
+	.legend {
+		position: absolute;
+		right: 50px;
+		bottom: 30px;
+		padding: 0 30px;
+		border: 1px solid #b0a9a9;
+	}
+	.legend > p {
+		line-height: 70px;
+		font-size: 20px;
+		text-align: center;
+	}
+	ul {
+		display: flex;
+		flex-direction: column-reverse;
+	}
+	li {
+		list-style: none;
+		display: flex;
+		margin-bottom: 20px;
+	}
+	li > .color {
+		width: 50px;
+		height: 30px;
+	}
+	li > span {
+		line-height: 30px;
+		margin-left: 20px;
 	}
 </style>
