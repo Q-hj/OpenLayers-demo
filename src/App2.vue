@@ -14,7 +14,7 @@
 	import { Vector as VectorLayer } from 'ol/layer';
 	import { Vector as VectorSource } from 'ol/source';
 	import GeoJSON from 'ol/format/GeoJSON';
-
+	import { pattern } from './utils/colorLike';
 	// import zjGeoJson from './assets/GeoJSON/浙江省.json';
 
 	const colorConfig = [, '#6588e0', '#cce069', '#e0ab4a', '#e04f3f'];
