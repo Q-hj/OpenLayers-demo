@@ -15,7 +15,7 @@
 	import { Vector as VectorSource } from 'ol/source';
 	import GeoJSON from 'ol/format/GeoJSON';
 
-	// import zjGeoJson from './assets/GeoJSON/浙江省.json';
+	// import hangzhou from './assets/GeoJSON/浙江省.json';
 
 	const colorConfig = [, '#6588e0', '#cce069', '#e0ab4a', '#e04f3f'];
 	const sityData = {
@@ -25,7 +25,7 @@
 	};
 
 	// * 批量导入GeoJSON
-	const allJson = import.meta.glob('./assets/GeoJSON/*.json', { eager: true });
+	const allJson = import.meta.glob('./assets/GeoJSON/*市.json', { eager: true });
 	// console.log(allJson);
 	// * 组成cityGeoJson对象
 	const cityGeoJson = {};
@@ -56,8 +56,8 @@
 
 	onMounted(() => {
 		initMap().then(() => {
-			// setTimeout(() => addLayer(Object.keys(cityGeoJson)), 1000);
-			addLayer('浙江省');
+			setTimeout(() => addLayer(Object.keys(cityGeoJson)), 1000);
+			// addLayer('杭州市');
 		});
 	});
 
@@ -68,7 +68,19 @@
 	const addLayer = (cityName) => {
 		if (!cityName) return;
 
-		function addLayerItem(id) {
+		if (Array.isArray(cityName)) {
+			for (let i = 0, len = cityName.length; i < len; i++) {
+				const name = cityName[i];
+				// 颜色等级
+				const color = colorConfig[sityData[name] || 1];
+
+				addLayerItem(name, color);
+			}
+
+			return;
+		}
+
+		function addLayerItem(id, color = 'rgba(224, 214, 148, 0.8)') {
 			const geoJson = cityGeoJson[id];
 			if (!geoJson) return console.warn(`未找到${cityName}geoJson`);
 			let geoLayer = new VectorLayer({
@@ -81,9 +93,7 @@
 					// console.log(feature);
 					const { name } = feature.values_;
 
-					const color = colorConfig[sityData[name] || 1];
-
-					const showText = false; // Object.keys(cityGeoJson).includes(name);
+					// const showText = Object.keys(cityGeoJson).includes(name);
 
 					return new Style({
 						stroke: new Stroke({
@@ -93,16 +103,16 @@
 						fill: new Fill({
 							color,
 						}),
-						text: new Text({
-							textAlign: 'center', //位置
-							textBaseline: 'middle', //基准线
-							font: `normal 14px 微软雅黑`, //文字样式
-							text: showText && feature.values_.name, //文本内容
-							fill: new Fill({
-								color: '#ffffff',
-							}),
-							// stroke: new Stroke('#bab281'),
-						}),
+						// text: new Text({
+						// 	textAlign: 'center', //位置
+						// 	textBaseline: 'middle', //基准线
+						// 	font: `normal 14px 微软雅黑`, //文字样式
+						// 	text: showText && feature.values_.name, //文本内容
+						// 	fill: new Fill({
+						// 		color: '#ffffff',
+						// 	}),
+						// 	stroke: new Stroke('#bab281'),
+						// }),
 					});
 				},
 			});
@@ -111,7 +121,7 @@
 		}
 
 		// 移除原先geoJson图层
-		removeLayer('geoJson');
+		removeLayer(cityName);
 
 		// 添加单个区域json
 		addLayerItem(cityName);
@@ -160,9 +170,9 @@
 				const { name } = features[0].values_;
 
 				if (!name) return;
-				// setViewByLayer(name);
-				const isCity = Object.keys(cityGeoJson).includes(name);
-				isCity && addLayer(name);
+				setViewByLayer(name);
+				// const isCity = Object.keys(cityGeoJson).includes(name);
+				// isCity && addLayer(name);
 			});
 			resolve();
 		});
