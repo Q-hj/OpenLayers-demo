@@ -1,6 +1,6 @@
 <!-- GeoJSON -->
 <script setup>
-	import { onMounted } from 'vue';
+	import { onMounted, ref } from 'vue';
 	import 'ol/ol.css';
 	import Map from 'ol/Map';
 	import TileArcGISRest from 'ol/source/TileArcGISRest';
@@ -23,6 +23,7 @@
 		台州市: 2,
 		绍兴市: 3,
 	};
+	const legendVisbility = ref(true);
 
 	// * 批量导入GeoJSON
 	const allJson = import.meta.glob('./assets/GeoJSON/*.json', { eager: true });
@@ -174,6 +175,7 @@
 
 				// 省:8  市:9.5
 				if (zoom < 9) addLayer('浙江省');
+				legendVisbility.value = zoom < 9;
 			});
 
 			resolve();
@@ -218,7 +220,10 @@
 <template>
 	<div class="warp">
 		<div id="map">
-			<div class="legend">
+			<div
+				class="legend"
+				v-show="legendVisbility"
+			>
 				<p>图例</p>
 				<ul>
 					<li
